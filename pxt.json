@@ -2,7 +2,8 @@
     "name": "Motion Project",
     "description": "",
     "dependencies": {
-        "device": "*"
+        "device": "*",
+        "microphone": "*"
     },
     "files": [
         "main.blocks",
@@ -13,12 +14,9 @@
     "testFiles": [
         "test.ts"
     ],
-    "targetVersions": {
-        "target": "1.4.40",
-        "targetId": "arcade"
-    },
     "supportedTargets": [
-        "arcade"
+        "arcade",
+        "microbit"
     ],
-    "preferredEditor": "blocksprj"
+    "preferredEditor": "tsprj"
 }
