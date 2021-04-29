@@ -1,9 +1,6 @@
 namespace SpriteKind {
     export const Spacecows = SpriteKind.create()
 }
-controller.up.onEvent(ControllerButtonEvent.Pressed, function () {
-    Spaceship.vy += -5
-})
 sprites.onCreated(SpriteKind.Spacecows, function (sprite) {
     sprite.setImage(img`
         . . . . . . . . . . . . . . . . 
@@ -24,17 +21,47 @@ sprites.onCreated(SpriteKind.Spacecows, function (sprite) {
         . . b . b b b b b b . b b b . . 
         `)
     sprite.setPosition(randint(10, 150), -21)
-    sprite.setVelocity(randint(-10, 10), 20)
+    sprite.setVelocity(randint(-20, 20), 20)
+    sprite.setBounceOnWall(true)
 })
-controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
-    Spaceship.vx += -5
+controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
+    projectile = sprites.createProjectileFromSprite(img`
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . 9 9 . . . . . . . 
+        . . . . . . . 9 9 . . . . . . . 
+        . . . . . . . 9 9 . . . . . . . 
+        . . . . . . . 9 9 . . . . . . . 
+        . . . . . . . 9 9 . . . . . . . 
+        . . . . . . . 9 9 . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        `, Spaceship, 0, -42)
+    pause(200)
+    pause(200)
 })
-controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
-    Spaceship.vx += 5
+sprites.onOverlap(SpriteKind.Projectile, SpriteKind.Spacecows, function (sprite, otherSprite) {
+    otherSprite.startEffect(effects.coolRadial, 100)
+    otherSprite.say("*ded*", 100)
+    otherSprite.setVelocity(randint(-30, 30), 20)
+    otherSprite.setPosition(randint(10, 150), -21)
+    info.changeScoreBy(10)
 })
-controller.down.onEvent(ControllerButtonEvent.Pressed, function () {
-    Spaceship.vy += 5
+info.onLifeZero(function () {
+    game.over(false, effects.confetti)
 })
+sprites.onOverlap(SpriteKind.Player, SpriteKind.Spacecows, function (sprite, otherSprite) {
+    info.changeLifeBy(-1)
+    pause(1000)
+    pause(500)
+})
+let projectile: Sprite = null
 let Spaceship: Sprite = null
 scene.setBackgroundImage(img`
     ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
@@ -160,6 +187,7 @@ scene.setBackgroundImage(img`
     `)
 game.splash("Well so you are here", "little tiny spaceship...")
 game.splash("Destroy all dem", "SPACE COWS!!!")
+game.splash("A/Spacebar to shoot", "WASD to move")
 Spaceship = sprites.create(img`
     ................................
     ................................
@@ -303,3 +331,6 @@ let SpaceCow6 = sprites.create(img`
     . . . . . . . . . . . . . . . . 
     . . . . . . . . . . . . . . . . 
     `, SpriteKind.Spacecows)
+info.setScore(0)
+info.setLife(4)
+controller.moveSprite(Spaceship)
